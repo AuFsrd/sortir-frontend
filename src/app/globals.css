@@ -25,3 +25,18 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+button, input[type="submit"] {
+  background-color: blue;
+  color: white;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+label {
+  display: block;
+}
+
+h1 {
+  font-size: 2rem;
+}
