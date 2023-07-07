@@ -1,7 +1,7 @@
 "use client"
 import { getAllUsers } from "@/services/api-requests"
 import { useState } from "react";
-import { User } from "@/models/interfaces";
+import { User, Event } from "@/models/interfaces";
 import PatchForm from "@/components/PatchForm";
 
 export default function Tests() {
@@ -18,7 +18,7 @@ export default function Tests() {
     }
   }
 
-  const usersList = users.map((user) => <p key={user.id}>{user.eventsAsOrganiser.map((e) => e.name)}</p>);
+  const usersList = users.map((user) => <p key={user.id}>{user.eventsAsOrganiser.map((e) => (e as Event).name)}</p>);
 
   return (
     <>

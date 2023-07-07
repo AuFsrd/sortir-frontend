@@ -1,6 +1,7 @@
 import { getAccessToken } from "axios-jwt";
 import { client } from "./client";
 import * as Entities from "@/models/interfaces";
+import { EventRequestInstructions, RequestInstructor } from "./requestBuilder";
 
 const baseURL = process.env.NEXT_PUBLIC_SERVER_URL
 
@@ -29,6 +30,7 @@ export const updateUser = async (user: Entities.User): Promise<Entities.User> =>
     {...user,
       site: `${baseURL}sites/${(user.site as Entities.Site).id}`,
       eventsAsOrganiser: (user.eventsAsOrganiser as Entities.Event[]).map((e) => `${baseURL}events/${e.id}`),
+      eventsAsParticipant: (user.eventsAsParticipant as Entities.Event[]).map((e) => `${baseURL}events/${e.id}`),
     }, {
     headers: {
       'Authorization': 'Bearer '+getAccessToken(),
@@ -52,16 +54,17 @@ export const getAllEvents = async (): Promise<Entities.Event[]> => {
 /**
  * 
  * @TODO getAllEventsBy ?
- *//*
-export const getAllEventsBy = async (): Promise<Entities.Event[]> => {
-  const { data } = await client.get('users.json', {
+ */
+export const getAllEventsBy = async (request: EventRequestInstructions): Promise<Entities.Event[]> => {
+  const { data } = await client.get(
+    RequestInstructor.instance.makeEventRequest(request), {
     headers: {
       'Authorization': 'Bearer '+getAccessToken()
     }
   })
   return data;
 }
-*/
+
 
 export const getEvent = async (id: number): Promise<Entities.Event> => {
   const { data } = await client.get(`events/${id}.json`, {
@@ -72,11 +75,39 @@ export const getEvent = async (id: number): Promise<Entities.Event> => {
   return data;
 }
 
-export const updateEvent = async (event: Entities.Event): Promise<Entities.Event> => {
-  const { data } = await client.patch(`events/${event.id}`, event, {
+export const updateEvent = async (event: Partial<Entities.Event>): Promise<Entities.Event> => {
+  const { data } = await client.patch(
+    `events/${event.id}`,
+    {...event,
+      status: `${baseURL}statuses/${(event.status as Entities.Status).id}`,
+      venue: `${baseURL}venues/${(event.venue as Entities.Venue).id}`,
+      organiser: `${baseURL}users/${(event.organiser as Entities.User).id}`,
+      participants: (event.participants as Entities.User[]).map((u) => `${baseURL}users/${u.id}`),
+    }, {
     headers: {
       'Authorization': 'Bearer '+getAccessToken(),
       'Content-Type': 'application/merge-patch+json'
+    }
+  })
+  return data;
+}
+
+/**
+ * @TODO PAS FINIE
+ * @param event 
+ * @returns 
+ */
+export const createEvent = async (event: Entities.Event): Promise<Entities.Event> => {
+  const { data } = await client.post(
+    `events/`,
+    {...event,
+      state: `${baseURL}states/${(event.status as Entities.Status).id}`,
+      venue: `${baseURL}venues/${(event.venue as Entities.Venue).id}`,
+      organiser: `${baseURL}users/${(event.organiser as Entities.User).id}`,
+    }, {
+    headers: {
+      'Authorization': 'Bearer '+getAccessToken(),
+      'Content-Type': 'application/json'
     }
   })
   return data;

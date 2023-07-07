@@ -2,12 +2,9 @@
  * Fichier déclarant toutes les interfaces métier.
  */
 
-interface Fetchable {
-	id: number
-	restname: string
-}
+export type IRI = `/api/${string}/${number}`;
 
-export interface User extends Fetchable {
+export interface User {
 	id: number,
 	username: string,
 	roles: string[],
@@ -17,9 +14,49 @@ export interface User extends Fetchable {
 	email: string,
 	administrator: boolean,
 	active: boolean,
-	site: Site | string,
-	eventsAsOrganiser: Partial<Event>[]
+	site: Site,
+	eventsAsOrganiser: Partial<Event>[] | IRI[],
+	eventsAsParticipant: Partial<Event>[] | IRI[]
 }
+export interface Event {
+	id: number,
+	name: string,
+	startDateTime: string,
+	duration: number,
+	registrationDeadline: string,
+	maxParticipants: number,
+	description: string,
+	status: Status | IRI,
+	venue: Venue | IRI,
+	organiser: Partial<User> | IRI,
+	participants: Partial<User>[] | IRI[]
+}
+
+export interface Site {
+	id: number,
+	name: string
+}
+
+export interface Status {
+	id: number,
+	name: string
+}
+
+export interface Venue {
+	id: number,
+	name: string,
+	street: string,
+	city: City | IRI
+}
+
+export interface City {
+	id: number,
+	name: string,
+	postcode: string
+}
+
+
+
 /*
 export class User {
 	id: number;
@@ -53,21 +90,3 @@ export class User {
 	}
 }
 */
-export interface Site extends Fetchable {
-	id: number,
-	name: string
-}
-
-export interface Event extends Fetchable {
-	id: number,
-	name: string,
-	startDateTime: string,
-	duration: number,
-	registrationDeadline: string,
-	maxParticipants: number,
-	description: string,
-	state: string | Object,
-	venue: string | Object,
-	organiser: string | Object,
-	participants: string[] | Object[]
-}
