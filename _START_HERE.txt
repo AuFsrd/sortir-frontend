@@ -1,0 +1,27 @@
+-------------------------------------------
+Structure de l'application:
+-------------------------------------------
+public
+  L Toutes les ressources publiques (images)
+src
+  L app   // chaque dossier contenu dans app est automatiquement routé. Next.JS créera un url avec le nom du dossier
+    L event
+      L page.tsx  // le composant principal du dossier. Il est automatiquement appelé à l'url correspondante (ici : localhost:3000/event)
+      L loading.tsx  // facultatif. il est automatiquement affiché lorsque page.tsx charge
+      L new  // sous dossier de event. Sa page.tsx est visible à localhost:3000/event/new
+    L profile
+    L template
+    L tests
+    L ...
+    L page.tsx  // page d'accueil
+    L layout.tsx   // équivalent du base template
+  L components  // éléments d'interface utilisateur
+  L models  // entités
+  L services  // ensemble d'utilitaires transverses (ex: data access)
+.env  // J'ai déclaré l'URL du serveur backend. Il sert de base à toutes les requetes. Si votre serveur n'écoute pas le port 8000, il faudra changer cette valeur dans le .env
+
+-------------------------------------------
+Commandlines
+-------------------------------------------
+  npm install : installe les dépendances
+  npm run dev : lance le serveur

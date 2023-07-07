@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { useState, useEffect } from "react"
-import { updateUser, getUser } from "@/services/api-requests"
+import { updateUser, getUser } from "@/services/apiRequests"
 import { User, Site } from "@/models/interfaces"
 
 const schema = yup

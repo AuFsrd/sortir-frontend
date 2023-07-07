@@ -13,7 +13,7 @@ const schema = yup
 
 export default function LoginForm({ refresh }: any) {
 
-    const [serverError, setServerError] = useState<string>("");
+  const [serverError, setServerError] = useState<string>("");
 
   const {
     register,

@@ -1,17 +1,10 @@
 import { IRI } from "@/models/interfaces"
 import { user } from "./auth";
 
-/*
-http://127.0.0.1:8000/api/events.json
-?name=My cool&organiser.site=1
-&startDateTime[after]=2023-08-15
-&registrationDeadline[before]=2023-08-15
-&or[organizer]=1
-&or[not][organizer]=1
-&or[participants]=1
-&or[registrationDeadline][before]=2023-08-15
-*/
-
+/**
+ * Classes en charge de construire une requete complexe.
+ * Actuellement, elle ne sert qu'à générer la requete filtrée des Events.
+ */
 export interface EventRequestInstructions {
   name?: string,
   site?: number | IRI,
@@ -100,7 +93,7 @@ export class EventRequestBuilder {
   
   public addNotParticipant(): void {
     this.appendSeparator();
-    this._request += `or[not][participants]=${user.id}`;
+    this._request += `or[not][participants]=${user.id}`; // Cette instruction ne fonctionne pas.
   }
   
   public addPast(): void {

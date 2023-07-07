@@ -1,5 +1,5 @@
 "use client"
-import { getAllUsers } from "@/services/api-requests"
+import { getAllUsers } from "@/services/apiRequests"
 import { useState } from "react";
 import { User, Event } from "@/models/interfaces";
 import PatchForm from "@/components/PatchForm";

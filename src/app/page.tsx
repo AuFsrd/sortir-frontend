@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getAllEventsBy } from "@/services/api-requests";
+import { getAllEventsBy } from "@/services/apiRequests";
 import { EventRequestInstructions } from "@/services/requestBuilder";
 import { Event, User } from "@/models/interfaces";
 
@@ -26,12 +26,12 @@ export default function Home() {
   const toggleUserIsParticipant = () => setReqInstructions(prevState => ({
     ...prevState,
     userIsParticipant: !prevState.userIsParticipant,
-}))
+  }))
 
-const toggleUserNotParticipant = () => setReqInstructions(prevState => ({
-  ...prevState,
-  userIsNotParticipant: !prevState.userIsNotParticipant,
-}))
+  const toggleUserNotParticipant = () => setReqInstructions(prevState => ({
+    ...prevState,
+    userIsNotParticipant: !prevState.userIsNotParticipant,
+  }))
 
   async function updateEvents() {
     const data = await getAllEventsBy(reqInstructions)
@@ -43,7 +43,7 @@ const toggleUserNotParticipant = () => setReqInstructions(prevState => ({
     updateEvents()    
   }, [reqInstructions])
 
-  let ctr = 1;
+  let ctr = 1; // Debug
   return (
     <>
       <h1>Hello</h1>

@@ -1,11 +1,21 @@
 import axios from 'axios';
 import { IAuthTokens, TokenRefreshRequest, applyAuthTokenInterceptor, getBrowserLocalStorage } from 'axios-jwt'
 
+/**
+ * Récupère l'url de base du serveur dans le .env
+ */
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
+/**
+ * Exporte une instance unique d'axios en charge d'effectuer les requetes.
+ */
 export const client = axios.create({
     baseURL: BASE_URL
 })
+
+/**
+ * TOUT CE QU'IL Y EN DESSOUS NE SERT A RIEN POUR L'INSTANT, A PRIORI
+ */
 
 // 2. Define token refresh function.
 const requestRefresh: TokenRefreshRequest = async (refreshToken: string): Promise<IAuthTokens | string> => {
