@@ -29,12 +29,40 @@ body {
 button, input[type="submit"] {
   background-color: blue;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
   cursor: pointer;
 }
 
+input[type="submit"]:disabled {
+  filter: saturate(0) brightness(1.5);
+  cursor: default;
+}
+
 label {
-  display: block;
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2ch;
+}
+
+form {
+  width: 100%;
+}
+input:not([type="checkbox"]), textarea {
+  width: 100%;
+  color: black;
+  padding: 0.25rem 0.5rem;
+  position: relative;
+  border-bottom: transparent 2px solid;
+  transition: border 200ms ease-in-out
+}
+
+input[type="text"]:focus, textarea:focus {
+  background-color: #f5f5f5;
+  outline: none;
+  border-bottom: blue 2px solid;
 }
 
 h1 {

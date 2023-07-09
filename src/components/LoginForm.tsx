@@ -14,6 +14,7 @@ const schema = yup
 export default function LoginForm({ refresh }: any) {
 
   const [serverError, setServerError] = useState<string>("");
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -23,7 +24,13 @@ export default function LoginForm({ refresh }: any) {
     resolver: yupResolver(schema),
   })
   const onSubmit = async (data: LoginRequest) => {
-    await login(data);
+    setLoading(true);
+    try {
+      await login(data);
+    } catch (e) {
+    } finally {
+      setLoading(false)
+    }
     refresh();
   }
 
@@ -32,7 +39,7 @@ export default function LoginForm({ refresh }: any) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="username">Identifiant</label>
-          <input {...register("username")} />
+          <input type="text" {...register("username")} />
           <p>{errors.username?.message}</p>
         </div>     
 
@@ -40,7 +47,10 @@ export default function LoginForm({ refresh }: any) {
         <input type="password" {...register("password")} />
         <p>{errors.password?.message}</p>
 
-        <input type="submit" />
+        <label htmlFor="checkbox">Se souvenir de moi</label>
+        <input type="checkbox" {...register("checkbox")} />
+
+        <input type="submit" disabled={loading} />
       </form>
       <p>{serverError}</p>
     </div>
