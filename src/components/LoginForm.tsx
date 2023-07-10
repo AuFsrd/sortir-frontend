@@ -8,6 +8,7 @@ const schema = yup
   .object({
     username: yup.string().required(),
     password: yup.string().required(),
+    rememberme: yup.boolean()
   })
   .required()
 
@@ -47,8 +48,8 @@ export default function LoginForm({ refresh }: any) {
         <input type="password" {...register("password")} />
         <p>{errors.password?.message}</p>
 
-        <label htmlFor="checkbox">Se souvenir de moi</label>
-        <input type="checkbox" {...register("checkbox")} />
+        <label htmlFor="rememberme">Se souvenir de moi</label>
+        <input type="checkbox" {...register("rememberme")} />
 
         <input type="submit" disabled={loading} />
       </form>

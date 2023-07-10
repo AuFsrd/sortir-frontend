@@ -1,19 +1,18 @@
-import { IRI } from "@/models/interfaces"
-import { user } from "./auth";
+import { IRI, User } from "@/models/interfaces"
 
 /**
  * Classes en charge de construire une requete complexe.
  * Actuellement, elle ne sert qu'à générer la requete filtrée des Events.
  */
 export interface EventRequestInstructions {
-  name?: string,
-  site?: number | IRI,
-  startDate?: string,
-  endDate?: string,
-  userIsOrganizer?: boolean,
-  userIsParticipant?: boolean,
-  userIsNotParticipant?: boolean,
-  includePastEvents?: boolean
+  name?: string | null,
+  site?: number | IRI | null,
+  startDate?: Date | null,
+  endDate?: Date | null,
+  userIsOrganizer?: boolean | undefined,
+  userIsParticipant?: boolean | undefined,
+  userIsNotParticipant?: boolean | undefined,
+  includePastEvents?: boolean | undefined
 }
 
 export class RequestInstructor {
@@ -33,21 +32,26 @@ export class RequestInstructor {
 
   public makeEventRequest(inst: EventRequestInstructions): string {
     this.erb.reset();
+    this.erb.addDefault();
     inst.name && this.erb.addName(inst.name);
     inst.site && this.erb.addSite(inst.site);
-    inst.startDate && this.erb.addStart(inst.startDate);
-    inst.endDate && this.erb.addEnd(inst.endDate);
-    inst.userIsOrganizer && this.erb.addIsOrganizer()
-    inst.userIsParticipant &&this.erb.addIsParticipant()
-    inst.userIsNotParticipant && this.erb.addNotParticipant()
-    inst.includePastEvents && this.erb.addPast()
-    return this.erb.request
+    inst.startDate && this.erb.addStart(inst.startDate.toISOString());
+    inst.endDate && this.erb.addEnd(inst.endDate.toISOString());  
+    inst.userIsOrganizer && this.erb.addIsOrganizer();
+    if ((inst.userIsParticipant && !inst.userIsNotParticipant) || (!inst.userIsParticipant && inst.userIsNotParticipant)) {
+      inst.userIsParticipant && this.erb.addIsParticipant();
+      inst.userIsNotParticipant && this.erb.addNotParticipant();
+    }
+    inst.includePastEvents && this.erb.addPast();
+    return this.erb.request;
   }
 }
 
 export class EventRequestBuilder {
   
   private _request!: string;
+  private _user: User = JSON.parse(sessionStorage.getItem("user")!);
+  private _optionals: string = 'and[or]';
 
   public constructor() {
     this.reset();
@@ -55,10 +59,22 @@ export class EventRequestBuilder {
 
   public reset() {
     this._request = process.env.NEXT_PUBLIC_SERVER_URL!+'events.json?';
+    this._optionals = 'and[or]';
   }
 
   private appendSeparator() {
     if (!this._request.endsWith('?')) { this._request += '&'; }
+  }
+
+  public opts(): string {
+    const opt = this._optionals;
+    this._optionals = 'or'
+    return opt
+  }
+
+  public addDefault() {
+    this.appendSeparator();
+    this._request += `or[][status.name]=OPEN&or[][status.name]=IN PROGRESS`;
   }
   
   public addName(name: string): void {
@@ -83,23 +99,22 @@ export class EventRequestBuilder {
 
   public addIsOrganizer(): void {
     this.appendSeparator();
-    this._request += `or[organiser]=${user.id}`;
+    this._request += `${this.opts()}[organiser]=${this._user.id}`;
   }
 
   public addIsParticipant(): void {
     this.appendSeparator();
-    this._request += `or[participants]=${user.id}`;
+    this._request += `${this.opts()}[participants]=${this._user.id}`;
   }
   
   public addNotParticipant(): void {
     this.appendSeparator();
-    this._request += `or[not][participants]=${user.id}`; // Cette instruction ne fonctionne pas.
+    this._request += `notParticipant=${this._user.id}`; // Cette instruction ne fonctionne pas.
   }
   
   public addPast(): void {
     this.appendSeparator();
-    const now = new Date()
-    this._request += `or[registrationDeadline][before]=${now.toLocaleDateString}`;
+    this._request += `or[][status.name]=PAST`;
   }
 
   public get request(): string {

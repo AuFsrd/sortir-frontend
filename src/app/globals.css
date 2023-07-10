@@ -6,6 +6,8 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --main-rgb: 74, 179, 217;
+  --white-rgb: 243, 243, 243
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,8 +29,9 @@ body {
 }
 
 button, input[type="submit"] {
-  background-color: blue;
-  color: white;
+  background-color: rgb(var(--main-rgb));
+  width: 100%;
+  color: rgb(var(--white-rgb));
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -50,7 +53,8 @@ label {
 form {
   width: 100%;
 }
-input:not([type="checkbox"]), textarea {
+
+input:not([type="checkbox"],[type="submit"]), textarea {
   width: 100%;
   color: black;
   padding: 0.25rem 0.5rem;
@@ -59,12 +63,47 @@ input:not([type="checkbox"]), textarea {
   transition: border 200ms ease-in-out
 }
 
-input[type="text"]:focus, textarea:focus {
-  background-color: #f5f5f5;
+input:not([type="checkbox"],[type="submit"]):focus, textarea:focus {
+  background-color: rgb(var(--white-rgb));
   outline: none;
-  border-bottom: blue 2px solid;
+  border-bottom: rgb(var(--main-rgb)) 2px solid;
 }
 
 h1 {
   font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+article {
+  background-color: rgb(var(--white-rgb));
+  margin-bottom: 1rem;
+  width: 100%;
+  padding: 1rem;
+}
+
+header {
+  position: fixed;
+}
+
+.avatar {
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0.25rem;
+  position: relative;
+}
+
+.avatar:hover::after {
+  content: attr(data-user);
+  position: absolute;
+  background-color: rgb(var(--white-rgb));
+  color: black;
 }

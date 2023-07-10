@@ -12,8 +12,6 @@ export interface LoginRequest {
   password: string;
 }
 
-export let user: User;
-
 /**
  * Fonction de login
  * Envoie l'identifiant et le mot de passe au serveur. Il reçoit un token en retour, qu'il stocke
@@ -33,9 +31,9 @@ export const login = async (params: LoginRequest) => {
     refreshToken: response.data.refresh_token
   })
 
-  // Charge les données de l'utilisateur une variable
-  /* @TODO: la stocker en session */
-  user = await getUser(response.data.user);
+  // Charge les données de l'utilisateur une variable et la stocke en session
+  const user: User = await getUser(response.data.user);
+  sessionStorage.setItem("user", JSON.stringify(user));
 }
 
 /**

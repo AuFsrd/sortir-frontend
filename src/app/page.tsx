@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react"
 import { getAllEventsBy } from "@/services/apiRequests";
 import { EventRequestInstructions } from "@/services/requestBuilder";
-import { Event, User } from "@/models/interfaces";
+import { Event, User, Status } from "@/models/interfaces";
+import HomeForm from "@/components/HomeForm";
+import EventBox from "@/components/EventBox";
 
 export default function Home() {
   const [reqInstructions, setReqInstructions] = useState<EventRequestInstructions>({
@@ -17,25 +19,17 @@ export default function Home() {
     includePastEvents: false
   })
   const [events, setEvents] = useState<Event[]>([])
-
-  const toggleUserIsOrganizer = () => setReqInstructions(prevState => ({
-      ...prevState,
-      userIsOrganizer: !prevState.userIsOrganizer,
-  }))
-
-  const toggleUserIsParticipant = () => setReqInstructions(prevState => ({
-    ...prevState,
-    userIsParticipant: !prevState.userIsParticipant,
-  }))
-
-  const toggleUserNotParticipant = () => setReqInstructions(prevState => ({
-    ...prevState,
-    userIsNotParticipant: !prevState.userIsNotParticipant,
-  }))
+  const [loading, setLoading] = useState(false);
 
   async function updateEvents() {
-    const data = await getAllEventsBy(reqInstructions)
-    setEvents(data);
+    setLoading(true);
+    try {
+      const data = await getAllEventsBy(reqInstructions)
+      setEvents(data);
+    } catch (e) {
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -47,11 +41,10 @@ export default function Home() {
   return (
     <>
       <h1>Hello</h1>
-      <button onClick={toggleUserIsOrganizer}>Événements que j'organise</button>
-      <button onClick={toggleUserIsParticipant}>Événements auxquels je participe</button>
-      <button onClick={toggleUserNotParticipant}>Événements auxquels je ne participe pas</button>
-      {events.map((e) =>
-      <p key={e.id}> {ctr++}<b>Participants:</b> {(e.participants as User[]).map((e) => (e).username+' ')}, <b>organiseur:</b> {(e.organiser as User).username}</p>)}
+      {/* Insère le formulaire de recherche*/}
+      <HomeForm loading={loading} setLoading={setLoading} setReq={setReqInstructions} />
+      {/* Insère un EventBox pour chaque event de la liste et lui passe l'objet event correspondant*/}
+      {events.map((e) => <EventBox key={e.id} __debugRow={ctr++} event={e} />)}
     </>
   )
 }

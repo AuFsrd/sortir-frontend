@@ -23,6 +23,8 @@ export default function Navbar({ refresh }: any) {
           <li><Link href="/profile">Mon profil</Link></li>
           <li><Link href="/tests">Tests</Link></li>
           <li><Link href="/template">Template</Link></li>
+          {user.administrator &&
+          <li><Link href="http://localhost:8000/" target="_blank">Portail admin</Link></li>}          
         </ul>
         <button onClick={handleLogout}>Logout</button>
       </nav>

@@ -15,7 +15,7 @@ export type IRI = `/api/${string}/${number}`;
 
 /**
  * L'interface User est le contrat que doivent respecter les objets JavaScript
- * qui représente l'entité User. Un objet de type User *doit* comporter toutes ces clés.
+ * représentant une instance de l'entité User. Un objet de type User *doit* comporter toutes ces clés.
  */
 export interface User {
 	id: number,
@@ -27,9 +27,9 @@ export interface User {
 	email: string,
 	administrator: boolean,
 	active: boolean,
-	site: Site | IRI, // Plus d'info à la ligne 50
-	eventsAsOrganiser: Partial<Event>[] | IRI[], // Plus d'info à la ligne 50
-	eventsAsParticipant: Partial<Event>[] | IRI[] // Plus d'info à la ligne 50
+	site: Site | IRI, // Plus d'info à la ligne 53
+	eventsAsOrganiser: Partial<Event>[] | IRI[], // Plus d'info à la ligne 53
+	eventsAsParticipant: Partial<Event>[] | IRI[] // Plus d'info à la ligne 53
 }
 
 /**
@@ -43,10 +43,10 @@ export interface Event {
 	registrationDeadline: string,
 	maxParticipants: number,
 	description: string,
-	status: Status | IRI, // Plus d'info à la ligne 50
-	venue: Venue | IRI, // Plus d'info à la ligne 50
-	organiser: Partial<User> | IRI, // Plus d'info à la ligne 50
-	participants: Partial<User>[] | IRI[] // Plus d'info à la ligne 50
+	status: Status | IRI, // Plus d'info à la ligne 53
+	venue: Venue | IRI, // Plus d'info à la ligne 53
+	organiser: Partial<User> | IRI, // Plus d'info à la ligne 53
+	participants: Partial<User>[] | IRI[] // Plus d'info à la ligne 53
 }
 
 /**
@@ -75,7 +75,7 @@ export interface Event {
  * 	active: true
  * 	site: /api/sites/2 (IRI)
  * 	eventsAsOrganiser: ["/api/events/2", "/api/events/4"] // IRI[]
- *  eventsAsParticipant: [{id: 3, name: "My Cool Event"}, {id: 5}] // Partial<Event>[]
+ *  eventsAsParticipant: [{id: 3, name: "My Cool Event", ...}, {id: 5}] // Partial<Event>[]
  * }
  * 
  * Dans la pratique, on travaillera quasiment tout le temps avec des Partial<T>. Les IRI sont générés

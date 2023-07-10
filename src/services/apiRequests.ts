@@ -97,11 +97,11 @@ export const updateEvent = async (event: Partial<Entities.Event>): Promise<Entit
  * @param event 
  * @returns 
  */
-export const createEvent = async (event: Entities.Event): Promise<Entities.Event> => {
+export const createEvent = async (event: Partial<Entities.Event>): Promise<Entities.Event> => {
   const { data } = await client.post(
     `events/`,
     {...event,
-      state: `${baseURL}states/${(event.status as Entities.Status).id}`,
+      status: `${baseURL}statuses/${(event.status as Entities.Status).id}`,
       venue: `${baseURL}venues/${(event.venue as Entities.Venue).id}`,
       organiser: `${baseURL}users/${(event.organiser as Entities.User).id}`,
     }, {
