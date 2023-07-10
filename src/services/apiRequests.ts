@@ -114,5 +114,13 @@ export const createEvent = async (event: Partial<Entities.Event>): Promise<Entit
 }
 
 /**
- * GENERIC
+ * SITES
  */
+export const getAllSites = async (): Promise<Entities.Site[]> => {
+  const { data } = await client.get('sites.json', {
+    headers: {
+      'Authorization': 'Bearer '+getAccessToken()
+    }
+  })
+  return data;
+}

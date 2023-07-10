@@ -1,17 +1,17 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { EventRequestInstructions } from "@/services/requestBuilder";
-import { getAllEventsBy } from "@/services/apiRequests";
-import { Event, User, Status } from "@/models/interfaces";
+import { getAllEventsBy, getAllSites } from "@/services/apiRequests";
+import { Event, User, Status, Site } from "@/models/interfaces";
 
 const schema = yup
   .object({
     name: yup.string().nullable().default(null),
     site: yup.number().nullable().transform(id => (!Number.isNaN(id) ? id : undefined)),
-    startDate: yup.date().nullable().transform(d => (d instanceof Date && !Number.isNaN(d) ? d : undefined)),
-    endDate: yup.date().nullable().transform(d => (d instanceof Date && !Number.isNaN(d) ? d : undefined)),
+    startDate: yup.date().nullable().transform(d => (d instanceof Date && !isNaN(d) ? d : undefined)),
+    endDate: yup.date().nullable().transform(d => (d instanceof Date && !isNaN(d) ? d : undefined)),
     userIsOrganizer: yup.boolean(),
     userIsParticipant: yup.boolean(),
     userIsNotParticipant: yup.boolean(),
@@ -27,6 +27,21 @@ export default function HomeForm(props: any) {
   } = useForm({
     resolver: yupResolver(schema),
   })
+
+  const [sites, setSites] = useState<Site[]>([]);
+  
+  async function getSites() {
+    try {
+      const data = await getAllSites();
+      setSites(data);
+    } catch (e) {
+    } finally {
+    }
+  }
+
+  useEffect(() => {
+    getSites()
+  }, [])
   
   const onSubmit = (data: EventRequestInstructions) => {
       props.setReq(data);
@@ -43,20 +58,25 @@ export default function HomeForm(props: any) {
 
       <div>
         <label htmlFor="site">Site</label>
-        <input type="select" {...register("site")} />
+        <select id="site" {...register("site")} >
+          <option key={0} value={undefined}>-- Choisir un site --</option>
+          {sites.map(site => <option key={site.id} value={site.id}>{site.name}</option>)}
+        </select>
         <p>{errors.site?.message}</p>
       </div>
 
-      <div>
+      <div className="flex justify-between">
+      <div className="w-[48%]">
         <label htmlFor="startDate">Date de début</label>
         <input type="date" {...register("startDate")} />
         <p>{errors.startDate?.message}</p>
       </div>
 
-      <div>
+      <div className="w-[48%]">
         <label htmlFor="endDate">Date de fin</label>
         <input type="date" {...register("endDate")} />
         <p>{errors.endDate?.message}</p>
+      </div>
       </div>
 
       <div>

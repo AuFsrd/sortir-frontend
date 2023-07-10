@@ -44,7 +44,7 @@ export default function Home() {
       {/* Insère le formulaire de recherche*/}
       <HomeForm loading={loading} setLoading={setLoading} setReq={setReqInstructions} />
       {/* Insère un EventBox pour chaque event de la liste et lui passe l'objet event correspondant*/}
-      {events.map((e) => <EventBox key={e.id} __debugRow={ctr++} event={e} />)}
+      {events.length ? events.map((e) => <EventBox key={e.id} __debugRow={ctr++} event={e} />) : <p>Aucun événement</p>}
     </>
   )
 }

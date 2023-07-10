@@ -7,9 +7,10 @@
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
   --main-rgb: 74, 179, 217;
-  --white-rgb: 243, 243, 243
+  --white-rgb: 243, 243, 243;
+  --black-rgb: 23, 23, 23;
 }
-
+/*
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -17,7 +18,7 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-
+*/
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
@@ -54,9 +55,10 @@ form {
   width: 100%;
 }
 
-input:not([type="checkbox"],[type="submit"]), textarea {
+input:not([type="checkbox"],[type="submit"]), textarea, select {
+  background-color: white;
   width: 100%;
-  color: black;
+  color: rgb(var(--black-rgb));
   padding: 0.25rem 0.5rem;
   position: relative;
   border-bottom: transparent 2px solid;
@@ -91,7 +93,81 @@ article {
 }
 
 header {
+  display: flex;
+  flex-direction: column;
   position: fixed;
+  background-color: rgb(var(--main-rgb));
+  align-items: center;
+  width: 100%;
+  z-index: 10;
+  padding: 0.5rem;
+  color: rgb(var(--white-rgb));
+}
+
+nav {
+  display: flex;
+  justify-content: end;
+  text-align: end;
+  padding: 3rem;
+  position: absolute;
+  background-color: rgb(var(--main-rgb));
+  width: 100%;
+  height: 100vh;
+  font-size: 2rem;
+  color: rgb(var(--white-rgb));
+  transition: left 200ms ease-in-out;
+}
+
+.menu-false {
+  left: 100%;
+}
+
+.menu-true {
+  left: 0%;
+}
+
+.burger-btn {
+  background-color: rgb(var(--main-rgb));
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  z-index: 15;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 100ms ease-in-out;
+}
+
+.burger-btn:hover {
+  background-color: rgba(var(--white-rgb), 0.2);
+}
+
+.burger {
+  z-index: 15;
+  position: relative;
+}
+
+.burger, .burger::before, .burger::after {
+  background-color: rgb(var(--white-rgb));
+  height: 0.1rem;
+  width: 2rem;
+}
+
+.burger::before, .burger::after {
+  position: absolute;
+  content: "";
+  left: 0
+}
+
+.burger::before {
+  top: -0.5rem
+}
+
+.burger::after {
+  bottom: -0.5rem
 }
 
 .avatar {
@@ -105,5 +181,15 @@ header {
   content: attr(data-user);
   position: absolute;
   background-color: rgb(var(--white-rgb));
-  color: black;
+  color: rgb(var(--black-rgb));
+}
+
+.logo {
+  font-size: 3rem;
+  font-weight: 700;
+  color: rgb(var(--black-rgb));
+}
+
+.logo span {
+  color: rgb(var(--white-rgb));
 }

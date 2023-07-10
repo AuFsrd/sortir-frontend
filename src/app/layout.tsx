@@ -55,7 +55,7 @@ export default function RootLayout({
         <>
           <UserContext.Provider value={user}> {/* Tout ce qui est contenu dans ce provider a accès la variable de contexte */}
             <Navbar refresh={refresh} />
-          <main className='flex min-h-screen max-w-2xl flex-col m-auto items-center p-2'>
+          <main className='flex min-h-screen max-w-2xl pt-32 flex-col m-auto items-center p-2'>
             {children}
           </main>
           </UserContext.Provider>
