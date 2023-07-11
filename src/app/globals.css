@@ -24,6 +24,7 @@
   --main-rgb: 74, 179, 217;
   --white-rgb: 243, 243, 243;
   --black-rgb: 23, 23, 23;
+  --danger-rgb: 210, 31, 32
 }
 /*
 @media (prefers-color-scheme: dark) {
@@ -254,4 +255,15 @@ nav {
 
 .logo span {
   color: rgb(var(--white-rgb));
+}
+
+.error {
+  font-size: 0.80rem;
+  color: rgb(var(--danger-rgb));
+  animation: appear 1 200ms;
+}
+
+@keyframes appear {
+  0% {width: 0rem;}
+  100% {width: 1rem;}
 }

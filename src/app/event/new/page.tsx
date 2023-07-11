@@ -1,12 +1,12 @@
 "use client"
-
-
+import EventForm from "@/components/EventForm"
 
 export default function NewEvent() {
 
   return (
     <>
-      <h1>New Event</h1>
+      <h1>Nouvel événement</h1>
+      <EventForm />
     </>
   )
 }

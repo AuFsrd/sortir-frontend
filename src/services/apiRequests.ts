@@ -189,5 +189,6 @@ export const getAllCities = async (): Promise<Entities.City[]> => {
       'Authorization': 'Bearer '+getAccessToken()
     }
   })
+  console.log(data)
   return data;
 }
