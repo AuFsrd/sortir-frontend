@@ -65,7 +65,6 @@ export const getAllEventsBy = async (request: EventRequestInstructions): Promise
   return data;
 }
 
-
 export const getEvent = async (id: number): Promise<Entities.Event> => {
   const { data } = await client.get(`events/${id}.json`, {
     headers: {
@@ -92,12 +91,31 @@ export const updateEvent = async (event: Partial<Entities.Event>): Promise<Entit
   return data;
 }
 
+export const setEventStatus = async (event: Partial<Entities.Event>, statusId: Entities.STATUS): Promise<Entities.Event> => {
+  const { data } = await client.patch(
+    `events/${event.id}`,
+    {...event,
+      status: `${baseURL}statuses/${statusId}`
+    }, {
+    headers: {
+      'Authorization': 'Bearer '+getAccessToken(),
+      'Content-Type': 'application/merge-patch+json'
+    }
+  })
+  return data;
+}
+
 /**
- * @TODO PAS FINIE
+ * Méthode en charge de créer un Event
+ * Cette méthode vérifie que la venue existe avant de créer l'event. Si elle n'existe pas,
+ * elle la créera au préalable.
  * @param event 
  * @returns 
  */
 export const createEvent = async (event: Partial<Entities.Event>): Promise<Entities.Event> => {
+  if (! await getVenue((event.venue as Entities.Venue).id)) { // Code marche probablement pas.
+    await createVenue((event.venue as Entities.Venue));
+  };
   const { data } = await client.post(
     `events/`,
     {...event,
@@ -110,6 +128,7 @@ export const createEvent = async (event: Partial<Entities.Event>): Promise<Entit
       'Content-Type': 'application/json'
     }
   })
+  console.log("Created: "+data)
   return data;
 }
 
@@ -118,6 +137,54 @@ export const createEvent = async (event: Partial<Entities.Event>): Promise<Entit
  */
 export const getAllSites = async (): Promise<Entities.Site[]> => {
   const { data } = await client.get('sites.json', {
+    headers: {
+      'Authorization': 'Bearer '+getAccessToken()
+    }
+  })
+  return data;
+}
+
+/**
+ * VENUES
+ */
+export const getVenue = async (id: number): Promise<Entities.Venue> => {
+  const { data } = await client.get(`venues/${id}.json`, {
+    headers: {
+      'Authorization': 'Bearer '+getAccessToken()
+    }
+  })
+  return data;
+}
+
+export const getAllVenues = async (): Promise<Entities.Venue[]> => {
+  const { data } = await client.get('venues.json', {
+    headers: {
+      'Authorization': 'Bearer '+getAccessToken()
+    }
+  })
+  return data;
+}
+
+export const createVenue = async (venue: Partial<Entities.Venue>): Promise<Entities.Venue> => {
+  const { data } = await client.post(
+    `venues/`,
+    {...venue,
+      city: `${baseURL}cities/${(venue.city as Entities.City).id}`,
+    }, {
+    headers: {
+      'Authorization': 'Bearer '+getAccessToken(),
+      'Content-Type': 'application/json'
+    }
+  })
+  console.log("Created: "+data)
+  return data;
+}
+
+/**
+ * CITIES
+ */
+export const getAllCities = async (): Promise<Entities.City[]> => {
+  const { data } = await client.get('cities.json', {
     headers: {
       'Authorization': 'Bearer '+getAccessToken()
     }

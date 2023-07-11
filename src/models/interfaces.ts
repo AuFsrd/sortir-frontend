@@ -92,6 +92,16 @@ export interface Status {
 	name: string
 }
 
+export enum STATUS {
+	CREATED = 1,
+	OPEN = 2,
+	CLOSED = 3,
+	IN_PROGRESS = 4,
+	PAST = 5,
+	CANCELLED = 6,
+	ARCHIVED = 7
+}
+
 export interface Venue {
 	id: number,
 	name: string,
