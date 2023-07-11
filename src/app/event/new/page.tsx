@@ -1,5 +1,7 @@
 "use client"
 
+
+
 export default function NewEvent() {
 
   return (

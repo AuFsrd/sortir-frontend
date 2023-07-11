@@ -9,9 +9,9 @@ export interface EventRequestInstructions {
   site?: number | IRI | null,
   startDate?: Date | null,
   endDate?: Date | null,
-  userIsOrganizer?: boolean | undefined,
-  userIsParticipant?: boolean | undefined,
-  userIsNotParticipant?: boolean | undefined,
+  organiser?: boolean | undefined,
+  participant?: boolean | undefined,
+  notParticipant?: boolean | undefined,
   includePastEvents?: boolean | undefined
 }
 
@@ -36,22 +36,29 @@ export class RequestInstructor {
     inst.name && this.erb.addName(inst.name);
     inst.site && this.erb.addSite(inst.site);
     inst.startDate && this.erb.addStart(inst.startDate.toISOString());
-    inst.endDate && this.erb.addEnd(inst.endDate.toISOString());  
-    inst.userIsOrganizer && this.erb.addIsOrganizer();
-    if ((inst.userIsParticipant && !inst.userIsNotParticipant) || (!inst.userIsParticipant && inst.userIsNotParticipant)) {
-      inst.userIsParticipant && this.erb.addIsParticipant();
-      inst.userIsNotParticipant && this.erb.addNotParticipant();
-    }
+    inst.endDate && this.erb.addEnd(inst.endDate.toISOString());
     inst.includePastEvents && this.erb.addPast();
+    inst.organiser && this.erb.addIsOrganiser();
+    if (XOR(inst.participant, inst.notParticipant)) {
+      inst.participant && this.erb.addIsParticipant();
+      inst.notParticipant && this.erb.addNotParticipant();
+    }
+    if (inst.organiser || XOR(inst.participant, inst.notParticipant)) {
+      this.erb.addUserFilters();
+    }
     return this.erb.request;
   }
+}
+
+function XOR(a: any, b: any) {
+  return (a && !b) || (!a && b);
 }
 
 export class EventRequestBuilder {
   
   private _request!: string;
   private _user: User = JSON.parse(sessionStorage.getItem("user")!);
-  private _optionals: string = 'and[or]';
+  private _userFilter: any[] = [this._user.id]
 
   public constructor() {
     this.reset();
@@ -59,17 +66,11 @@ export class EventRequestBuilder {
 
   public reset() {
     this._request = process.env.NEXT_PUBLIC_SERVER_URL!+'events.json?';
-    this._optionals = 'and[or]';
+    this._userFilter = [this._user.id];
   }
 
   private appendSeparator() {
     if (!this._request.endsWith('?')) { this._request += '&'; }
-  }
-
-  public opts(): string {
-    const opt = this._optionals;
-    this._optionals = 'or'
-    return opt
   }
 
   public addDefault() {
@@ -97,19 +98,21 @@ export class EventRequestBuilder {
     this._request += `registrationDeadline[before]=${endDate}`;
   }
 
-  public addIsOrganizer(): void {
-    this.appendSeparator();
-    this._request += `${this.opts()}[organiser]=${this._user.id}`;
+  public addIsOrganiser(): void {
+    this._userFilter.push("organiser")
   }
 
   public addIsParticipant(): void {
-    this.appendSeparator();
-    this._request += `${this.opts()}[participants]=${this._user.id}`;
+    this._userFilter.push("isParticipant")
   }
   
   public addNotParticipant(): void {
+    this._userFilter.push("notParticipant")
+  }
+
+  public addUserFilters(): void {
     this.appendSeparator();
-    this._request += `notParticipant=${this._user.id}`; // Cette instruction ne fonctionne pas.
+    this._request += "and[whereUser]="+JSON.stringify(this._userFilter);
   }
   
   public addPast(): void {

@@ -51,7 +51,7 @@ export default function RootLayout({
     <html lang="fr">
       <body className={inter.className}>
       <>
-      {logged ? (
+      {user ? (
         <>
           <UserContext.Provider value={user}> {/* Tout ce qui est contenu dans ce provider a accès la variable de contexte */}
             <Navbar refresh={refresh} />
@@ -62,7 +62,7 @@ export default function RootLayout({
           <Footer />
         </>
         ) :
-        <main className='flex min-h-screen flex-col max-w-2xl m-auto items-center'>
+        <main className='flex min-h-screen flex-col max-w-2xl m-auto justify-center items-center'>
           <LoginForm refresh={refresh} />
         </main>
       }

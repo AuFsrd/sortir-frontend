@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  @variants responsive {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+  }
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -27,6 +42,12 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+
+footer {
+  background-color: rgb(var(--black-rgb));
+  color: rgb(var(--white-rgb));
+  padding: 2rem;
 }
 
 button, input[type="submit"] {
@@ -105,6 +126,8 @@ header {
 }
 
 nav {
+  z-index: 10;
+  top: 0;
   display: flex;
   justify-content: end;
   text-align: end;
@@ -115,15 +138,32 @@ nav {
   height: 100vh;
   font-size: 2rem;
   color: rgb(var(--white-rgb));
-  transition: left 200ms ease-in-out;
+  transition: right 200ms ease-in-out;
 }
 
 .menu-false {
-  left: 100%;
+  right: -100%;
 }
 
 .menu-true {
-  left: 0%;
+  right: 0%;
+}
+
+.backdrop {
+  position: fixed;
+  z-index: 1;
+  background-color: rgb(var(--black-rgb));
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 200ms ease-in-out;
+}
+
+@media only screen and (min-width: 600px) {
+
+  nav {
+    width: 350px;
+  }
 }
 
 .burger-btn {
@@ -148,6 +188,7 @@ nav {
 .burger {
   z-index: 15;
   position: relative;
+  transition: background-color 200ms ease-in-out;
 }
 
 .burger, .burger::before, .burger::after {
@@ -159,7 +200,8 @@ nav {
 .burger::before, .burger::after {
   position: absolute;
   content: "";
-  left: 0
+  left: 0;
+  transition: bottom 200ms ease-in-out, top 200ms ease-in-out, rotate 200ms ease-in-out
 }
 
 .burger::before {
@@ -170,8 +212,24 @@ nav {
   bottom: -0.5rem
 }
 
+.burger.close::before {
+  rotate: 135deg;
+  top: 0;
+}
+
+.burger.close::after {
+  rotate: -135deg;
+  bottom: 0;
+}
+
+.burger.close {
+  background-color: transparent;
+}
+
 .avatar {
   border-radius: 50%;
+  width: 48px;
+  height: 48px;
   display: inline-block;
   margin: 0.25rem;
   position: relative;
@@ -182,6 +240,10 @@ nav {
   position: absolute;
   background-color: rgb(var(--white-rgb));
   color: rgb(var(--black-rgb));
+}
+
+.me {
+  border: 3px solid rgb(var(--main-rgb));
 }
 
 .logo {
