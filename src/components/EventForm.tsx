@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState, useContext } from "react"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-import { createEvent, getAllCities, getVenuesBy } from "@/services/apiRequests";
+import { createEvent, getAllCities, getVenuesBy, updateEvent, getEvent } from "@/services/apiRequests";
 import { Event, City, Venue, User, Status, Site } from "@/models/interfaces";
 import { useRouter } from 'next/navigation'
 
@@ -36,7 +36,11 @@ type EventFormReq = {
   address: string
 }
 
-export default function EventForm() {
+type Context = {
+  context: string
+  eventId: number|undefined
+}
+export default function EventForm(props: Context) {
 
   const router = useRouter()
   const user = useContext(UserContext);
@@ -53,14 +57,29 @@ export default function EventForm() {
   const [venues, setVenues] = useState<Venue[]>([]);
   const [selectedCity, setSelectedCity] = useState<City|undefined>(undefined);
   const [selectedVenue, setSelectedVenue] = useState<Venue|undefined>(undefined);
+  const [event, setEvent] = useState<Event|undefined>(undefined);
 
   useEffect(() => {
     getCities()
+    getEventToUpdate()
   }, [])
 
   useEffect(() => {
     selectedCity && getVenues()
   }, [selectedCity])
+
+  async function getEventToUpdate() {
+    if (props.context !== "edit") {
+      return
+    }
+
+    try {
+      const data = await getEvent(props.eventId!);
+      setEvent(data);
+    } catch (e) {
+    } finally {
+    }
+  }
 
   async function getVenues() {
     try {
@@ -107,8 +126,8 @@ export default function EventForm() {
       console.log("La venue existe")
     }
     console.log(venue)
-
-    const newEvent: Partial<Event> = {
+    
+    let newEvent: Partial<Event> = {
       name: data.name,
       startDateTime: data.startDateTime.toISOString(),
       duration: data.duration,
@@ -122,7 +141,12 @@ export default function EventForm() {
     }
 
     console.log(newEvent)
-    create(newEvent)
+    if (props.context === "new") {
+      create(newEvent)
+    } else if (props.context === "edit") {
+      newEvent = {...newEvent, id: props.eventId}
+      update(newEvent)
+    }
   }
 
   const create = async (newEvent: Partial<Event>) => {
@@ -133,23 +157,31 @@ export default function EventForm() {
       }
   }
 
+  const update = async (newEvent: Partial<Event>) => {
+    const result = await updateEvent(newEvent);
+    if (result) {
+      console.log(result)
+      router.replace(`/event/${result.id}`)
+    }
+}
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mb-4">
       <div>
         <label htmlFor="name">Titre de l'événement</label>
-        <input type="text" placeholder="Titre de votre événement" {...register("name")} />
+        <input value={event?.name} type="text" placeholder="Titre de votre événement" {...register("name")} />
       </div>
       <p className="error">{errors.name?.message}</p>
 
       <div className="flex justify-between">
         <div className="w-[48%]">
           <label htmlFor="startDateTime">Date et heure de début</label>
-          <input type="datetime-local" {...register("startDateTime")} />
+          <input value={event?.startDateTime} type="datetime-local" {...register("startDateTime")} />
         </div>
 
         <div className="w-[48%]">
           <label htmlFor="registrationDeadline">Fin des inscriptions</label>
-          <input type="datetime-local" {...register("registrationDeadline")} />
+          <input value={event?.registrationDeadline} type="datetime-local" {...register("registrationDeadline")} />
         </div>
       </div>
       <p className="error">{errors.startDateTime?.message}</p>
@@ -158,12 +190,12 @@ export default function EventForm() {
       <div className="flex justify-between">
         <div className="w-[48%]">
           <label htmlFor="duration">Durée (minutes)</label>
-          <input type="number" {...register("duration")} />
+          <input value={event?.duration} type="number" {...register("duration")} />
         </div>
 
         <div className="w-[48%]">
           <label htmlFor="maxParticipants">Nombre de participants</label>
-          <input type="number" {...register("maxParticipants")} />
+          <input value={event?.maxParticipants} type="number" {...register("maxParticipants")} />
         </div>
       </div>
       <p className="error">{errors.duration?.message}</p>
@@ -172,6 +204,7 @@ export default function EventForm() {
       <div>
         <label htmlFor="city">Ville de l'événement</label>
         <select id="city" {...cityField} onChange={(e) => {selectCity(e); cityField.onChange(e)}}>
+          <option key={0} value={undefined}>-- Choisissez une ville --</option>
           {cities.map(c =>
           <option key={"ven-"+c.id} value={c.id}>{c.name}</option>)}
         </select>
@@ -204,12 +237,11 @@ export default function EventForm() {
 
       <div>
         <label htmlFor="name">Description de l'événement</label>
-        <textarea placeholder="Décrivez votre événement" {...register("description")}></textarea>
+        <textarea placeholder="Décrivez votre événement" {...register("description")}>{event?.description}</textarea>
       </div>
       <p className="error">{errors.description?.message}</p>
 
       <input type="submit" disabled={false} />
-      <p>{errors ? "true" : "false"}</p>
     </form>
   )
 }
