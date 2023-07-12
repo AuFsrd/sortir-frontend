@@ -13,7 +13,7 @@ export default function EventBox({event, __debugRow}: props) {
   return (
     <article>
       <Link href={`/event/${event.id}`}>
-      <p>{(event.status as Partial<Status>).name} | {((event.organiser as User).site as Site).name}</p>
+          {/*{<p>{(event.status as Partial<Status>).name} | {((event.organiser as User).site as Site).name}</p>}*/}
       <h2>{event.name}</h2>
       <h4>{(event.venue as Venue).name}</h4>
       <em>{(event.venue as Venue).street}, {((event.venue as Venue).city as City).name}</em>
