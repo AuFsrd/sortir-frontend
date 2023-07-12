@@ -106,7 +106,7 @@ export const setEventStatus = async (event: Partial<Entities.Event>, statusId: E
 }
 
 /**
- * Méthode en charge de créer un Event
+ * Méthode en charge de créer un EventDisplay
  * Cette méthode vérifie que la venue existe avant de créer l'event. Si elle n'existe pas,
  * elle la créera au préalable.
  * @param event 

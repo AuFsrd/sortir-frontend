@@ -1,10 +1,30 @@
 "use client"
 
+import { getEvent } from "@/services/apiRequests";
+import {useEffect, useState} from "react";
+import { Event } from "@/models/interfaces";
+import EventShow from "@/components/EventDisplay";
+import EventDisplay from "@/components/EventDisplay";
+
 export default function Event({ params }: { params: { id: string } }) {
+  const [event, setEvent] = useState<Event>()
+
+  async function loadEvent() {
+    try {
+      const data = await getEvent(+params.id)
+      setEvent(data)
+    } catch (e) {
+    }
+  }
+
+  useEffect(() => {
+    console.log("Fetching...")
+    loadEvent()
+  }, [])
 
   return (
     <>
-      <h1>Event {params.id}</h1>
+      {event ? <EventDisplay event={event}/> : <p>Chargement des données...</p>}
     </>
   )
 }
