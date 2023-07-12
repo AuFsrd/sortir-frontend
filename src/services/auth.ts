@@ -39,7 +39,10 @@ export const login = async (params: LoginRequest) => {
 /**
  * Fonction de logout
  */
-export const logout = () => clearAuthTokens()
+export const logout = () => {
+  clearAuthTokens()
+  sessionStorage.removeItem('user')
+}
 
 /**
  * Fonction vérifiant si l'utilisateur est connecté

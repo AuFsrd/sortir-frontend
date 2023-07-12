@@ -30,6 +30,7 @@ export interface User {
 	site: Site | IRI, // Plus d'info à la ligne 53
 	eventsAsOrganiser: Partial<Event>[] | IRI[], // Plus d'info à la ligne 53
 	eventsAsParticipant: Partial<Event>[] | IRI[] // Plus d'info à la ligne 53
+	filename: string
 }
 
 /**
@@ -75,7 +76,7 @@ export interface Event {
  * 	active: true
  * 	site: /api/sites/2 (IRI)
  * 	eventsAsOrganiser: ["/api/events/2", "/api/events/4"] // IRI[]
- *  eventsAsParticipant: [{id: 3, name: "My Cool Event", ...}, {id: 5}] // Partial<Event>[]
+ *  eventsAsParticipant: [{id: 3, name: "My Cool EventDisplay", ...}, {id: 5}] // Partial<EventDisplay>[]
  * }
  * 
  * Dans la pratique, on travaillera quasiment tout le temps avec des Partial<T>. Les IRI sont générés
@@ -129,7 +130,7 @@ export class User {
 	administrator: boolean;
 	active: boolean;
 	site: Site|string;
-	eventsAsOrganiser: Partial<Event>[];
+	eventsAsOrganiser: Partial<EventDisplay>[];
 	
 	constructor(data: User) {
 		this.id = data.id

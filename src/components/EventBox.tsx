@@ -5,9 +5,8 @@ import { useContext } from "react"
 
 type props = {
   event: Event
-  __debugRow: number
 }
-export default function EventBox({event, __debugRow}: props) {
+export default function EventBox({event}: props) {
   const user = useContext(UserContext)
 
   return (
@@ -23,7 +22,7 @@ export default function EventBox({event, __debugRow}: props) {
       <h3>Participants ({event.participants.length}/{event.maxParticipants})</h3>
       <div className="flex flex-no-wrap overflow-x-scroll no-scrollbar">
         {event.participants.map(p =>
-        <Link className="" href={`/profile/${(p as User).id}`}>
+        <Link key={`${event.id}-${(p as User).id}`} className="" href={`/profile/${(p as User).id}`}>
           <img
             key={(p as User).id+"pic"}
             className={"flex grow-1 avatar " + ((p as User).id === user.id ? "me" : "")}

@@ -45,7 +45,6 @@ export default function HomeForm(props: any) {
   
   const onSubmit = (data: EventRequestInstructions) => {
       props.setReq(data);
-      console.log("let's go "+ data)
   }
 
   return (

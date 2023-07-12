@@ -66,6 +66,7 @@ export const getAllEventsBy = async (request: EventRequestInstructions): Promise
 }
 
 
+
 export const getAllEventsByOrganiser = async (userId: number): Promise<Entities.Event[]> => {
   const { data } = await client.get(
       `events.json?organiser=${userId}`, {
@@ -73,6 +74,7 @@ export const getAllEventsByOrganiser = async (userId: number): Promise<Entities.
           'Authorization': 'Bearer '+getAccessToken()
         }
       })
+
   return data;
 }
 
@@ -116,27 +118,59 @@ export const setEventStatus = async (event: Partial<Entities.Event>, statusId: E
   return data;
 }
 
+const register = async (event: Partial<Entities.Event>, userId: number, register: boolean): Promise<Entities.Event> => {
+  let participants = event.participants;
+  let participantsIRIs = participants?.map(e => {
+    try {
+      return `/api/users/${(e as Partial<Entities.User>).id}`
+    } finally {
+    }
+  })
+  console.log(participantsIRIs)
+  if (register) {
+    participantsIRIs?.push((`/api/users/${userId}` as Entities.IRI));
+  } else {
+    participantsIRIs?.splice(participantsIRIs.indexOf(`/api/users/${userId}` as Entities.IRI));
+  }
+  const {data} = await client.patch(
+    `events/${event.id}`,
+    {
+      participants: participantsIRIs
+    }, {
+      headers: {
+        'Authorization': 'Bearer ' + getAccessToken(),
+        'Content-Type': 'application/merge-patch+json',
+        'Accept': 'application/json'
+      }
+    })
+  return data;
+}
+
 /**
- * Méthode en charge de créer un Event
+ * Méthode en charge de créer un EventDisplay
  * Cette méthode vérifie que la venue existe avant de créer l'event. Si elle n'existe pas,
  * elle la créera au préalable.
  * @param event 
  * @returns 
  */
 export const createEvent = async (event: Partial<Entities.Event>): Promise<Entities.Event> => {
-  if (! await getVenue((event.venue as Entities.Venue).id)) { // Code marche probablement pas.
-    await createVenue((event.venue as Entities.Venue));
-  };
+  console.log("Creating event...")
+  let newEvent = event
+  if ((event.venue as Partial<Entities.Venue>)!.id === 0) {
+    console.log("Creating venue...")
+    const newVenue = await createVenue((event.venue as Partial<Entities.Venue>)!)
+    newEvent.venue = newVenue;
+  }
+
   const { data } = await client.post(
-    `events/`,
-    {...event,
-      status: `${baseURL}statuses/${(event.status as Entities.Status).id}`,
-      venue: `${baseURL}venues/${(event.venue as Entities.Venue).id}`,
-      organiser: `${baseURL}users/${(event.organiser as Entities.User).id}`,
+    `events`,
+    {...newEvent,
+      venue: `/api/venues/${(newEvent.venue as Entities.Venue).id}`,
     }, {
     headers: {
       'Authorization': 'Bearer '+getAccessToken(),
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     }
   })
   console.log("Created: "+data)
@@ -167,6 +201,15 @@ export const getVenue = async (id: number): Promise<Entities.Venue> => {
   return data;
 }
 
+export const getVenuesBy = async (id:number): Promise<Entities.Venue[]> => {
+  const { data } = await client.get(`venues.json?city=${id}`, {
+    headers: {
+      'Authorization': 'Bearer '+getAccessToken()
+    }
+  })
+  return data;
+}
+
 export const getAllVenues = async (): Promise<Entities.Venue[]> => {
   const { data } = await client.get('venues.json', {
     headers: {
@@ -178,9 +221,11 @@ export const getAllVenues = async (): Promise<Entities.Venue[]> => {
 
 export const createVenue = async (venue: Partial<Entities.Venue>): Promise<Entities.Venue> => {
   const { data } = await client.post(
-    `venues/`,
-    {...venue,
-      city: `${baseURL}cities/${(venue.city as Entities.City).id}`,
+    `venues`,
+    {
+      name: venue.name,
+      street: venue.street,
+      city: venue.city,
     }, {
     headers: {
       'Authorization': 'Bearer '+getAccessToken(),
@@ -200,6 +245,5 @@ export const getAllCities = async (): Promise<Entities.City[]> => {
       'Authorization': 'Bearer '+getAccessToken()
     }
   })
-  console.log(data)
   return data;
 }
