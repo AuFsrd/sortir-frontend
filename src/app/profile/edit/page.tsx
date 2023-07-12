@@ -3,9 +3,11 @@
 import * as yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {City, Event, Venue, User, Site, IRI} from "@/models/interfaces";
-import {getAllSites} from "@/services/apiRequests";
+import {createEvent, getAllSites} from "@/services/apiRequests";
+import {useRouter} from "next/navigation";
+import {UserContext} from "@/app/layout";
 
 const schema = yup.object({
 
@@ -16,7 +18,20 @@ const schema = yup.object({
     email: yup.string().required(),
     site: yup.string().required()
 })
-export default function ProfileForm(props: any) {
+
+type UserFormReq = {
+    username: string,
+    firstName: string,
+    lastName: string,
+    phone: string,
+    email: string,
+    site: string
+}
+
+export default function ProfileForm() {
+    const router = useRouter()
+    const user = useContext(UserContext);
+
     const {
         register,
         handleSubmit,
@@ -26,12 +41,13 @@ export default function ProfileForm(props: any) {
     })
 
     const [sites, setSites] = useState<Site[]>([]);
+    const [selectedSite, setSelectedSite] = useState<Site|undefined>(undefined);
 
     useEffect(() => {
-        getAllSites()
+        getSites()
     }, [])
 
-    async function getCities() {
+    async function getSites() {
         try {
             const data = await getAllSites();
             setSites(data);
@@ -40,13 +56,81 @@ export default function ProfileForm(props: any) {
         }
     }
 
-    const onSubmit = (data: Partial<Event>) => {
+    const siteField = register("site");
+    const onSubmit = (data: UserFormReq) => {
+        console.log(data)
+        const newUser: Partial<User> = {
+            username: data.username,
+            lastName: data.lastName,
+            phone: data.phone,
+            email: data.email,
+            site: sites.find(item => item.name === data.site)
+
+            // organiser: `/api/users/${user.id}`,
+        }
+
+        console.log(newUser)
+        create(newUser)
+    }
+    const create = async (newUser: Partial<User>) => {
+        const result = await createEvent(newUser);
+        if (result) {
+            console.log(result)
+            router.replace(`/profile/${result.id}`)
+        }
     }
 
-  return (
-    <>
-      <h1>Template</h1>
 
-    </>
+
+  return (
+      <form onSubmit={handleSubmit(onSubmit)} className="mb-4">
+          <div>
+              <label htmlFor="Username">Username</label>
+              <input type="text" placeholder="Username"  {...register("username")} />
+          </div>
+          <p className="error">{errors.username?.message}</p>
+
+          <div className="flex justify-between">
+              <div className="w-[48%]">
+                  <label htmlFor="firstName">First name</label>
+                  <input type="text" value={user?.firstName}{...register("firstName")} />
+              </div>
+
+              <div className="w-[48%]">
+                  <label htmlFor="lastName">Last name</label>
+                  <input type="text" value={user?.lastName} {...register("lastName")} />
+              </div>
+          </div>
+          <p className="error">{errors.firstName?.message}</p>
+          <p className="error">{errors.lastName?.message}</p>
+
+          <div className="flex justify-between">
+              <div className="w-[40%]">
+                  <label htmlFor="phone">Phone</label>
+                  <input type="text" placeholder="XXXXX" value={user?.phone} {...register("phone")} />
+              </div>
+
+              <div className="w-[60%]">
+                  <label htmlFor="email">Email</label>
+                  <input type="text" placeholder="xxxx@xxxx.xxx" value={user?.email} {...register("email")} />
+              </div>
+          </div>
+          <p className="error">{errors.phone?.message}</p>
+          <p className="error">{errors.email?.message}</p>
+
+          <div>
+              <label htmlFor="site">Site</label>
+              <input list="sites" id="site" placeholder="ENI site" value={(user?.site as Site).name} {...register("site")}/>
+          </div>
+          <p className="error">{errors.site?.message}</p>
+
+          <datalist id="sites">
+              {sites.map(s => <option key={s.id} value={s.name}/>)}
+          </datalist>
+
+
+          <input type="submit" disabled={false} value="Update"/>
+
+      </form>
   )
 }
