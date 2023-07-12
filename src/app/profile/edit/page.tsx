@@ -5,7 +5,7 @@ import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {useContext, useEffect, useState} from "react";
 import {City, Event, Venue, User, Site, IRI} from "@/models/interfaces";
-import {createEvent, getAllSites} from "@/services/apiRequests";
+import {createEvent, getAllSites, updateUser} from "@/services/apiRequests";
 import {useRouter} from "next/navigation";
 import {UserContext} from "@/app/layout";
 
@@ -53,27 +53,30 @@ export default function ProfileForm() {
             setSites(data);
         } catch (e) {
         } finally {
+            console.log(sites)
         }
     }
 
     const siteField = register("site");
     const onSubmit = (data: UserFormReq) => {
         console.log(data)
-        const newUser: Partial<User> = {
+        const newUser: User = {
+            ...user,
             username: data.username,
+            firstName: data.firstName,
             lastName: data.lastName,
             phone: data.phone,
             email: data.email,
-            site: sites.find(item => item.name === data.site)
+            site: sites.find(item => item.name === data.site)!
 
             // organiser: `/api/users/${user.id}`,
         }
 
         console.log(newUser)
-        create(newUser)
+        update(newUser)
     }
-    const create = async (newUser: Partial<User>) => {
-        const result = await createEvent(newUser);
+    const update = async (newUser: User) => {
+        const result = await updateUser(newUser);
         if (result) {
             console.log(result)
             router.replace(`/profile/${result.id}`)
@@ -93,7 +96,7 @@ export default function ProfileForm() {
           <div className="flex justify-between">
               <div className="w-[48%]">
                   <label htmlFor="firstName">First name</label>
-                  <input type="text" value={user?.firstName}{...register("firstName")} />
+                  <input type="text"{...register("firstName")} />
               </div>
 
               <div className="w-[48%]">
