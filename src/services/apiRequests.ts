@@ -2,7 +2,6 @@ import { getAccessToken } from "axios-jwt";
 import { client } from "./client";
 import * as Entities from "@/models/interfaces";
 import { EventRequestInstructions, RequestInstructor } from "./requestBuilder";
-import { isTypeElement } from "typescript";
 
 const baseURL = process.env.NEXT_PUBLIC_SERVER_URL
 
@@ -116,29 +115,31 @@ export const setEventStatus = async (event: Partial<Entities.Event>, statusId: E
   return data;
 }
 
-export const register = async (event: Partial<Entities.Event>, userId: number, register: boolean): Promise<Entities.Event> => {
+const register = async (event: Partial<Entities.Event>, userId: number, register: boolean): Promise<Entities.Event> => {
   let participants = event.participants;
-  participants?.map(e => {
+  let participantsIRIs = participants?.map(e => {
     try {
       return `/api/users/${(e as Partial<Entities.User>).id}`
-    } finally {}
-  })
-  if (register) {
-    participants?.push((`/api/users/${userId}` as Entities.IRI));
-  } else {
-    participants?.splice(participants.indexOf(`/api/users/${userId}` as Entities.IRI));
-  }
-  const { data } = await client.patch(
-    `events/${event.id}`,
-    {...event,
-      participants: participants
-    }, {
-    headers: {
-      'Authorization': 'Bearer '+getAccessToken(),
-      'Content-Type': 'application/merge-patch+json',
-      'Accept': 'application/json'
+    } finally {
     }
   })
+  console.log(participantsIRIs)
+  if (register) {
+    participantsIRIs?.push((`/api/users/${userId}` as Entities.IRI));
+  } else {
+    participantsIRIs?.splice(participantsIRIs.indexOf(`/api/users/${userId}` as Entities.IRI));
+  }
+  const {data} = await client.patch(
+    `events/${event.id}`,
+    {
+      participants: participantsIRIs
+    }, {
+      headers: {
+        'Authorization': 'Bearer ' + getAccessToken(),
+        'Content-Type': 'application/merge-patch+json',
+        'Accept': 'application/json'
+      }
+    })
   return data;
 }
 

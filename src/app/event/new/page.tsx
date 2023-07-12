@@ -6,7 +6,7 @@ export default function NewEvent() {
   return (
     <>
       <h1>Nouvel événement</h1>
-      <EventForm />
+      <EventForm context="new" eventId={undefined} />
     </>
   )
 }

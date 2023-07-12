@@ -30,6 +30,7 @@ export interface User {
 	site: Site | IRI, // Plus d'info à la ligne 53
 	eventsAsOrganiser: Partial<Event>[] | IRI[], // Plus d'info à la ligne 53
 	eventsAsParticipant: Partial<Event>[] | IRI[] // Plus d'info à la ligne 53
+	filename: string
 }
 
 /**
