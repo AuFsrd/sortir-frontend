@@ -1,28 +1,22 @@
 "use client"
-import { UserContext } from "@/app/layout";
-import {useContext, useEffect, useState} from "react";
-import { useForm } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
-import * as yup from "yup"
-import { EventRequestInstructions } from "@/services/requestBuilder";
-import { getAllEventsBy, getAllSites } from "@/services/apiRequests";
-import { Event, User, Status, Site } from "@/models/interfaces";
 
+import * as yup from "yup";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {useEffect, useState} from "react";
+import {City, Event, Venue, User, Site, IRI} from "@/models/interfaces";
+import {getAllSites} from "@/services/apiRequests";
 
-const schema = yup
-    .object({
-        name: yup.string().nullable().default(null),
-        site: yup.number().nullable().transform(id => (!Number.isNaN(id) ? id : undefined)),
-        startDate: yup.date().nullable().transform(d => (d instanceof Date && !isNaN(d) ? d : undefined)),
-        endDate: yup.date().nullable().transform(d => (d instanceof Date && !isNaN(d) ? d : undefined)),
-        organiser: yup.boolean(),
-        participant: yup.boolean(),
-        notParticipant: yup.boolean(),
-        includePastEvents: yup.boolean()
-    })
+const schema = yup.object({
 
+    username: yup.string().required(),
+    firstName: yup.string().required(),
+    lastName: yup.string().required(),
+    phone: yup.string().required(),
+    email: yup.string().required(),
+    site: yup.string().required()
+})
 export default function ProfileForm(props: any) {
-
     const {
         register,
         handleSubmit,
@@ -33,7 +27,11 @@ export default function ProfileForm(props: any) {
 
     const [sites, setSites] = useState<Site[]>([]);
 
-    async function getSites() {
+    useEffect(() => {
+        getAllSites()
+    }, [])
+
+    async function getCities() {
         try {
             const data = await getAllSites();
             setSites(data);
@@ -42,20 +40,13 @@ export default function ProfileForm(props: any) {
         }
     }
 
-    useEffect(() => {
-        getSites()
-    }, [])
-
-    const onSubmit = (data: EventRequestInstructions) => {
-        props.setReq(data);
-        console.log("let's go "+ data)
+    const onSubmit = (data: Partial<Event>) => {
     }
+
   return (
     <>
       <h1>Template</h1>
-      <p>Bonjour, {user?.firstName} {user?.lastName}</p>
-      <p>{variableDynamique}</p>
-      <button onClick={increment}>+</button>
+
     </>
   )
 }

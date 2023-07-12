@@ -65,6 +65,17 @@ export const getAllEventsBy = async (request: EventRequestInstructions): Promise
   return data;
 }
 
+
+export const getAllEventsByOrganiser = async (userId: number): Promise<Entities.Event[]> => {
+  const { data } = await client.get(
+      `events.json?organiser=${userId}`, {
+        headers: {
+          'Authorization': 'Bearer '+getAccessToken()
+        }
+      })
+  return data;
+}
+
 export const getEvent = async (id: number): Promise<Entities.Event> => {
   const { data } = await client.get(`events/${id}.json`, {
     headers: {

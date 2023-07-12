@@ -3,7 +3,7 @@ import { Event, User, Status, Venue, City, Site } from "@/models/interfaces"
 import Link from "next/link"
 import {useContext, useEffect, useState} from "react"
 import EventBox from "@/components/EventBox";
-import {getAllEventsBy, getEvent, getUser} from "@/services/apiRequests";
+import {getAllEventsBy, getAllEventsByOrganiser, getEvent, getUser} from "@/services/apiRequests";
 
 type props = {
   displayedUser: User,
@@ -13,6 +13,25 @@ export default function ProfileBox({displayedUser}: props) {
   const user = useContext(UserContext)
 
     let ctr = 1; // Debug
+    const [events, setEvents] = useState<Event[]>([])
+    const [loading, setLoading] = useState(false);
+
+    async function updateEvents() {
+        setLoading(true);
+        try {
+            const data = await getAllEventsByOrganiser(displayedUser.id)
+            setEvents(data);
+        } catch (e) {
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        console.log("Fetching...")
+        updateEvents()
+    }, [])
+
 
   return (
     <article>
@@ -26,7 +45,7 @@ export default function ProfileBox({displayedUser}: props) {
         {(displayedUser.id == user.id) &&
             <button><Link href={`/profile/edit`}>Edit</Link></button>
         }
-        {/*{events.length ? events.map((e ) => <EventBox key={(e as Event).id} event={e as Event} __debugRow={ctr++} />) : <p>Aucun événement</p>}*/}
+        {events.length ? events.map((e ) => <EventBox key={(e as Event).id} event={e as Event} __debugRow={ctr++} />) : <p>Aucun événement</p>}
 
     </article>
   )
