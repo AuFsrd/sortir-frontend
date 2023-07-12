@@ -1,20 +1,19 @@
 "use client"
 
 import {UserContext} from "@/app/layout"
-import {City, Event, Site, Status, STATUS, User, Venue} from "@/models/interfaces"
+import {City, Event, Site, Status, STATUS, User, Venue, IRI} from "@/models/interfaces"
 import {client} from "@/services/client";
 import Link from "next/link"
 import {useRouter} from 'next/navigation'
-import {useContext} from "react"
+import {Dispatch, SetStateAction, useContext} from "react"
 import {getAccessToken} from "axios-jwt";
-import {setEventStatus} from "@/services/apiRequests";
+import {setEventStatus, register} from "@/services/apiRequests";
 
 type props = {
   event: Event
 }
 export default function EventDisplay({event}: props) {
   const user = useContext(UserContext)
-  const router = useRouter()
 
   console.log(event.participants)
 
@@ -22,6 +21,13 @@ export default function EventDisplay({event}: props) {
     return event.participants.find(p => p.id == user.id);
   }
 
+  const toggleRegister = async (eventToRegister: Event, userId: number, reg: boolean) => {
+    const updatedEvent = await register(eventToRegister, userId, reg);
+    if (updatedEvent) {
+      console.log("Update: "+updatedEvent.participants.length)
+    }
+  }
+  /*
   const register = async (event: Partial<Event>, userId: number, register: boolean): Promise<Event> => {
     let participants = event.participants;
     let participantsIRIs = participants?.map(e => {
@@ -49,7 +55,7 @@ export default function EventDisplay({event}: props) {
       })
     return data;
   }
-
+*/
   function str2date(date: string) {
     return new Date(date);
   }
@@ -111,19 +117,19 @@ export default function EventDisplay({event}: props) {
       <h3>Participants ({event.participants.length}/{event.maxParticipants})</h3>
       <div className="">
         {event.participants.map(p =>
-          <Link className="" href={`/profile/${(p as User).id}`}>
+          <Link key={(p as User).id+"-link"} className="" href={`/profile/${(p as User).id}`}>
             {(p as User).firstName} {(p as User).lastName} ({(p as User).username})<br/>
           </Link>)}
       </div>
 
       {isParticipant() &&
-        <button className="mb-4" onClick={() => register(event, user.id, false)}>Je me désiste</button>
+        <button className="mb-4" onClick={() => toggleRegister(event, user.id, false)}>Je me désiste</button>
       }
       <br/>
       <br/>
 
       {(event.status as Status).name == 'OPEN' && !isParticipant() &&
-        <button className="mb-4" onClick={() => register(event, user.id, true)}>Je m'inscris</button>
+        <button className="mb-4" onClick={() => toggleRegister(event, user.id, true)}>Je m'inscris</button>
       }
 
       {(event.organiser as User).id == user.id && (event.status as Status).name == 'CREATED' &&

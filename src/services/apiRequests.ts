@@ -118,7 +118,7 @@ export const setEventStatus = async (event: Partial<Entities.Event>, statusId: E
   return data;
 }
 
-const register = async (event: Partial<Entities.Event>, userId: number, register: boolean): Promise<Entities.Event> => {
+export const register = async (event: Entities.Event, userId: number, register: boolean): Promise<Event> => {
   let participants = event.participants;
   let participantsIRIs = participants?.map(e => {
     try {
