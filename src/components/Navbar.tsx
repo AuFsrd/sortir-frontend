@@ -3,6 +3,7 @@ import Link from "next/link"
 import { logout } from "@/services/auth"
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/app/layout";
+import {User} from "@/models/interfaces";
 
 export default function Navbar({ refresh }: any) {
   const user = useContext(UserContext);
@@ -39,7 +40,7 @@ export default function Navbar({ refresh }: any) {
       <nav className={"menu-"+menu}>
         <ul className="mt-12">
           <li><Link href="/event/new" onClick={closeMenu}>Créer un event</Link></li>
-          <li><Link href="/profile" onClick={closeMenu}>Mon profil</Link></li>
+          <li><Link href={`/profile/${user.id}`} onClick={closeMenu}>Mon profil</Link></li>
           <li><Link href="/tests" onClick={closeMenu}>@Tests</Link></li>
           <li><Link href="/template" onClick={closeMenu}>@Template</Link></li>
           {user.administrator &&
