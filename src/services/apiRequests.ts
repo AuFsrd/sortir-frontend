@@ -130,7 +130,7 @@ export const register = async (event: Entities.Event, userId: number, register: 
   if (register) {
     participantsIRIs?.push((`/api/users/${userId}` as Entities.IRI));
   } else {
-    participantsIRIs?.splice(participantsIRIs.indexOf(`/api/users/${userId}` as Entities.IRI));
+    participantsIRIs?.splice(participantsIRIs.indexOf(`/api/users/${userId}` as Entities.IRI), 1);
   }
   const {data} = await client.patch(
     `events/${event.id}`,

@@ -41,11 +41,9 @@ export default function Navbar({ refresh }: any) {
         <ul className="mt-12">
           <li><Link href="/event/new" onClick={closeMenu}>Créer un event</Link></li>
           <li><Link href={`/profile/${user.id}`} onClick={closeMenu}>Mon profil</Link></li>
-          <li><Link href="/tests" onClick={closeMenu}>@Tests</Link></li>
-          <li><Link href="/template" onClick={closeMenu}>@Template</Link></li>
           {user.administrator &&
           <li><Link href="http://localhost:8000/" target="_blank" onClick={closeMenu}>Portail admin</Link></li>}
-          <li><button onClick={handleLogout}>Logout</button></li>         
+          <li><Link href="/" onClick={handleLogout}>Logout</Link></li>         
         </ul>   
       </nav>
       </>}
