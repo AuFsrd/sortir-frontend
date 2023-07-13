@@ -11,8 +11,9 @@ import {setEventStatus, register} from "@/services/apiRequests";
 
 type props = {
   event: Event
+  setEvent: any
 }
-export default function EventDisplay({event}: props) {
+export default function EventDisplay({event, setEvent}: props) {
   const user = useContext(UserContext)
 
   console.log(event.participants)

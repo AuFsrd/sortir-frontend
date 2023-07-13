@@ -26,7 +26,7 @@ export default function Event({ params }: { params: { id: string } }) {
 
   return (
     <>
-      {event ? <EventDisplay event={event}/> : <p>Chargement des données...</p>}
+      {event ? <EventDisplay event={event} setEvent={setEvent}/> : <p>Chargement des données...</p>}
     </>
   )
 }
