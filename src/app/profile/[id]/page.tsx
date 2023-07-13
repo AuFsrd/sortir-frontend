@@ -49,8 +49,7 @@ export default function Profile({ params }: {params: {id:string}}) {
      */
     return (
         <>
-            <h1>Profile</h1>
-            {displayedUser ? <ProfileBox displayedUser={displayedUser}/> : <p>Blalbalblalbal</p>}
+            {displayedUser ? <ProfileBox displayedUser={displayedUser}/> : <p>Chargement en cours.</p>}
         </>
 
     )
