@@ -2,6 +2,8 @@ import { UserContext } from "@/app/layout"
 import { Event, User, Status, Venue, City, Site } from "@/models/interfaces"
 import Link from "next/link"
 import { useContext } from "react"
+import 'react-tooltip/dist/react-tooltip.css'
+import { Tooltip } from 'react-tooltip'
 
 type props = {
   event: Event
@@ -22,7 +24,10 @@ export default function EventBox({event}: props) {
       <h3>Participants ({event.participants.length}/{event.maxParticipants})</h3>
       <div className="flex flex-no-wrap overflow-x-scroll no-scrollbar">
         {event.participants.map(p =>
-        <Link key={`${event.id}-${(p as User).id}`} className="" href={`/profile/${(p as User).id}`}>
+        <Link key={`${event.id}-${(p as User).id}`} className="" href={`/profile/${(p as User).id}`}
+              data-tooltip-id={`${event.id}-${(p as User).id}`} data-tooltip-content={(p as User).username}
+        >
+            <Tooltip id={`${event.id}-${(p as User).id}`}/>
           <img
             key={(p as User).id+"pic"}
             className={"flex grow-1 avatar " + ((p as User).id === user.id ? "me" : "")}

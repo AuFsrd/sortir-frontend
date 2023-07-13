@@ -45,7 +45,7 @@ export default function ProfileBox({displayedUser}: props) {
       <h4>{displayedUser.email}</h4>
       <h4>{(displayedUser.site as Site).name}</h4>
         {(displayedUser.id == user.id) &&
-            <button><Link href={`/profile/edit`}>Modifier</Link></button>
+            <button className="mt-3"><Link href={`/profile/edit`}>Modifier</Link></button>
         }
         </article>
 
