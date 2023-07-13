@@ -34,19 +34,24 @@ export default function ProfileBox({displayedUser}: props) {
 
 
   return (
+      <>
     <article>
 
       <h2>{displayedUser.username}</h2>
       <h4>{displayedUser.firstName}</h4>
+
       <h4>{displayedUser.lastName}</h4>
       <h4>{displayedUser.phone}</h4>
       <h4>{displayedUser.email}</h4>
       <h4>{(displayedUser.site as Site).name}</h4>
         {(displayedUser.id == user.id) &&
-            <button><Link href={`/profile/edit`}>Edit</Link></button>
+            <button className="mt-3"><Link href={`/profile/edit`}>Modifier</Link></button>
         }
-        {events.length ? events.map((e ) => <EventBox key={(e as Event).id} event={e as Event} __debugRow={ctr++} />) : <p>Aucun événement</p>}
+        </article>
 
-    </article>
+          {events.length ? events.map((e ) => <article> <EventBox key={(e as Event).id} event={e as Event} __debugRow={ctr++} /></article>) : <p>Aucun événement</p>}
+
+
+      </>
   )
 }

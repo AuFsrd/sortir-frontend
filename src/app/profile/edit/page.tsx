@@ -12,6 +12,11 @@ import {UserContext} from "@/app/layout";
 const schema = yup.object({
 
     username: yup.string().required(),
+    //password: yup.string().required(),
+    //confirmation: yup.string()
+      //  .required('Please retype your password.')
+        //.oneOf([yup.ref('password')], 'Your passwords do not match.'),
+
     firstName: yup.string().required(),
     lastName: yup.string().required(),
     phone: yup.string().required(),
@@ -21,6 +26,8 @@ const schema = yup.object({
 
 type UserFormReq = {
     username: string,
+    //password: string,
+   // confirmation: string,
     firstName: string,
     lastName: string,
     phone: string,
@@ -88,19 +95,19 @@ export default function ProfileForm() {
   return (
       <form onSubmit={handleSubmit(onSubmit)} className="mb-4">
           <div>
-              <label htmlFor="Username">Username</label>
+              <label htmlFor="Username">Pseudo</label>
               <input type="text" placeholder="Username"  {...register("username")} />
           </div>
           <p className="error">{errors.username?.message}</p>
 
           <div className="flex justify-between">
               <div className="w-[48%]">
-                  <label htmlFor="firstName">First name</label>
+                  <label htmlFor="firstName">Prénom</label>
                   <input type="text"{...register("firstName")} />
               </div>
 
               <div className="w-[48%]">
-                  <label htmlFor="lastName">Last name</label>
+                  <label htmlFor="lastName">Nom</label>
                   <input type="text" value={user?.lastName} {...register("lastName")} />
               </div>
           </div>
@@ -108,12 +115,12 @@ export default function ProfileForm() {
           <p className="error">{errors.lastName?.message}</p>
 
           <div className="flex justify-between">
-              <div className="w-[40%]">
-                  <label htmlFor="phone">Phone</label>
+              <div className="w-[38%]">
+                  <label htmlFor="phone">Téléphone</label>
                   <input type="text" placeholder="XXXXX" value={user?.phone} {...register("phone")} />
               </div>
 
-              <div className="w-[60%]">
+              <div className="w-[58%]">
                   <label htmlFor="email">Email</label>
                   <input type="text" placeholder="xxxx@xxxx.xxx" value={user?.email} {...register("email")} />
               </div>
@@ -132,7 +139,7 @@ export default function ProfileForm() {
           </datalist>
 
 
-          <input type="submit" disabled={false} value="Update"/>
+          <input className="mt-4" type="submit" disabled={false} value="Mettre à jour"/>
 
       </form>
   )
